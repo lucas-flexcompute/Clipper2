@@ -118,7 +118,7 @@ namespace Clipper2Lib
     template <typename T2>
     inline void Init(const T2 x_ = 0, const T2 y_ = 0, const int64_t z_ = 0)
     {
-      if constexpr (std::is_integral_v<T> &&
+      if (std::is_integral_v<T> &&
         is_round_invocable<T2>::value && !std::is_integral_v<T2>)
       {
         x = static_cast<T>(std::round(x_));
@@ -172,7 +172,7 @@ namespace Clipper2Lib
     template <typename T2>
     inline void Init(const T2 x_ = 0, const T2 y_ = 0)
     {
-      if constexpr (std::is_integral_v<T> &&
+      if (std::is_integral_v<T> &&
         is_round_invocable<T2>::value && !std::is_integral_v<T2>)
       {
         x = static_cast<T>(std::round(x_));
@@ -372,7 +372,7 @@ namespace Clipper2Lib
   {
     Rect<T1> result;
 
-    if constexpr (std::is_integral_v<T1> &&
+    if (std::is_integral_v<T1> &&
       is_round_invocable<T2>::value && !std::is_integral_v<T2>)
     {
       result.left = static_cast<T1>(std::round(rect.left * scale));
@@ -502,11 +502,11 @@ namespace Clipper2Lib
     result.reserve(path.size());
 #ifdef USINGZ
     std::transform(path.begin(), path.end(), back_inserter(result),
-      [scale_x, scale_y](const auto& pt)
+      [scale_x, scale_y](const Point<T2>& pt)
       { return Point<T1>(pt.x * scale_x, pt.y * scale_y, pt.z); });
 #else
     std::transform(path.begin(), path.end(), back_inserter(result),
-      [scale_x, scale_y](const auto& pt)
+      [scale_x, scale_y](const Point<T2>& pt)
       { return Point<T1>(pt.x * scale_x, pt.y * scale_y); });
 #endif
     return result;
@@ -525,7 +525,7 @@ namespace Clipper2Lib
   {
     Paths<T1> result;
 
-    if constexpr (std::is_integral_v<T1>)
+    if (std::is_integral_v<T1>)
     {
       RectD r = GetBounds<double, T2>(paths);
       if ((r.left * scale_x) < min_coord ||
@@ -541,7 +541,7 @@ namespace Clipper2Lib
 
     result.reserve(paths.size());
     std::transform(paths.begin(), paths.end(), back_inserter(result),
-      [=, &error_code](const auto& path)
+      [=, &error_code](const Path<T2>& path)
       { return ScalePath<T1, T2>(path, scale_x, scale_y, error_code); });
     return result;
   }
@@ -781,7 +781,7 @@ namespace Clipper2Lib
     T bb1maxx = CC_MAX(ln2a.x, ln2b.x);
     T bb1maxy = CC_MAX(ln2a.y, ln2b.y);
 
-    if constexpr (std::is_integral_v<T>)
+    if (std::is_integral_v<T>)
     {
       int64_t originx = (CC_MIN(bb0maxx, bb1maxx) + CC_MAX(bb0minx, bb1minx)) >> 1;
       int64_t originy = (CC_MIN(bb0maxy, bb1maxy) + CC_MAX(bb0miny, bb1miny)) >> 1;
@@ -897,7 +897,7 @@ namespace Clipper2Lib
         static_cast<double>(offPt.y - seg1.y) * dy) /
       (Sqr(dx) + Sqr(dy));
     if (q < 0) q = 0; else if (q > 1) q = 1;
-    if constexpr (std::is_integral_v<T>)
+    if (std::is_integral_v<T>)
       return Point<T>(
         seg1.x + static_cast<T>(nearbyint(q * dx)),
         seg1.y + static_cast<T>(nearbyint(q * dy)));

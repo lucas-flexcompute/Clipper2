@@ -364,7 +364,8 @@ namespace Clipper2Lib {
 		PolyPath64* AddChild(const Path64& path) override
 		{
 			auto p = std::make_unique<PolyPath64>(this);
-			auto* result = childs_.emplace_back(std::move(p)).get();
+			childs_.emplace_back(std::move(p));
+            auto* result = childs_.back().get();
 			result->polygon_ = path;
 			return result;
 		}
@@ -385,7 +386,7 @@ namespace Clipper2Lib {
 		{
 			return std::accumulate(childs_.cbegin(), childs_.cend(),
 				Clipper2Lib::Area<int64_t>(polygon_),
-				[](double a, const auto& child) {return a + child->Area(); });
+				[](double a, const std::unique_ptr<PolyPath64>& child) {return a + child->Area(); });
 		}
 
 	};
@@ -425,7 +426,8 @@ namespace Clipper2Lib {
 		{
 			int error_code = 0;
 			auto p = std::make_unique<PolyPathD>(this);
-			PolyPathD* result = childs_.emplace_back(std::move(p)).get();
+			childs_.emplace_back(std::move(p));
+            PolyPathD* result = childs_.back().get();
 			result->polygon_ = ScalePath<double, int64_t>(path, scale_, error_code);
 			return result;
 		}
@@ -433,7 +435,8 @@ namespace Clipper2Lib {
 		PolyPathD* AddChild(const PathD& path)
 		{
 			auto p = std::make_unique<PolyPathD>(this);
-			PolyPathD* result = childs_.emplace_back(std::move(p)).get();
+			childs_.emplace_back(std::move(p));
+            PolyPathD* result = childs_.back().get();
 			result->polygon_ = path;
 			return result;
 		}
@@ -454,7 +457,7 @@ namespace Clipper2Lib {
 		{
 			return std::accumulate(childs_.begin(), childs_.end(),
 				Clipper2Lib::Area<double>(polygon_),
-				[](double a, const auto& child) {return a + child->Area(); });
+				[](double a, const std::unique_ptr<PolyPathD>& child) {return a + child->Area(); });
 		}
 	};
 
