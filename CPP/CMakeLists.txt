@@ -109,6 +109,9 @@ set_target_properties(${CLIPPER2_LIBS} PROPERTIES FOLDER Libraries
                                          PUBLIC_HEADER "${CLIPPER2_INC}"
 )
 
+target_compile_features(Clipper2 PRIVATE cxx_std_17)
+target_compile_features(Clipper2Z PRIVATE cxx_std_17)
+
 if(CLIPPER2_UTILS OR CLIPPER2_TESTS OR CLIPPER2_EXAMPLES)
   set(CLIPPER2_UTILS_INC
     Utils/clipper.svg.h
